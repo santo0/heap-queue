@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class HeapQueueTest {
     private final static int DEFAULT_QUEUE_INIT_SIZE = 6;
     private final static int RANDOM_BOUND = 42;
+    private final String[] DEFAULT_STRING_VALUES = new String[]{"a", "b", "c", "d", "e", "f"};
 
     /**
      * Methods for testing
@@ -29,39 +30,17 @@ class HeapQueueTest {
         return array;
     }
 
-    private void addSomeValues(HeapQueue<String, Integer> queue) {
-        queue.add("patata", null);
-        queue.add("patata2", 0);
-        queue.add("patata3", null);
-        queue.add("patata4", 0);
-        queue.add("patata5", 2);
-        queue.add("patata6", 3);
-        queue.add("patata7", 9);
-    }
-
-    /**
-     * Specific tests
-     */
-
-
-    @Test
-    void customTest() {
-        HeapQueue<String, Integer> queue = new HeapQueue<>();
-        addSomeValues(queue);
-        int size = queue.size();
-        queue.printAll();
-        System.out.println("---------------------");
-        for (int i = 0; i < size; i++) {
-            queue.remove();
-            assertTrue(queue.isSorted());
-            queue.printAll();
-            System.out.println("---------------------");
+    private void addRandomElements(HeapQueue<Integer, String> queue) {
+        for (int i = 0; i < DEFAULT_QUEUE_INIT_SIZE; i++) {
+            queue.add(i, DEFAULT_STRING_VALUES[i % DEFAULT_STRING_VALUES.length]);
         }
     }
 
+
     /**
-     * Testing operations
+     * Tests
      */
+
     @Test
     void testAddElems() {
         HeapQueue<Integer, Integer> queue = new HeapQueue<>();
@@ -70,7 +49,7 @@ class HeapQueueTest {
             queue.add(integerPriority[i], integerPriority[i]);
             assertTrue(queue.isSorted());
         }
-        queue.printAll();
+        queue.printAllElementsInTree();
     }
 
 
@@ -86,7 +65,7 @@ class HeapQueueTest {
             }
             assertTrue(queue.isSorted());
         }
-        queue.printAll();
+        queue.printAllElementsInTree();
     }
 
     @Test
@@ -96,49 +75,31 @@ class HeapQueueTest {
             queue.add(1, 1);
             assertTrue(queue.isSorted());
         }
-        queue.printAll();
+        queue.printAllElementsInTree();
     }
-
-
+    
     @Test
     void testRemoveElems() {
-        HeapQueue<Integer, Integer> queue = new HeapQueue<>();
+        HeapQueue<Integer, String> queue = new HeapQueue<>();
+        addRandomElements(queue);
+        queue.printAllElementsInTree();
         for (int i = 0; i < DEFAULT_QUEUE_INIT_SIZE; i++) {
-            queue.add(i, i);
+            Integer removedElem = queue.remove();
+            assertEquals(DEFAULT_QUEUE_INIT_SIZE - i - 1, removedElem);
             assertTrue(queue.isSorted());
         }
-        queue.printAll();
-        for (int i = 0; i < DEFAULT_QUEUE_INIT_SIZE; i++) {
-            queue.remove();
-            assertTrue(queue.isSorted());
-        }
-        queue.printAll();
+        queue.printAllElementsInTree();
     }
 
     @Test
-    void testAllValidValuesOperations() {
+    void testRecursiveOperations() {
         HeapQueue<Integer, Integer> queue = new HeapQueue<>();
         for (int i = 0; i < DEFAULT_QUEUE_INIT_SIZE; i++) {
-            //IntelliJ has obligated me to create the variable finalI
-            int finalI = i;
-            assertDoesNotThrow(() -> queue.add(finalI % 2, finalI % 4));
+            queue.addRecursiveEdition(i, i);
         }
         for (int i = 0; i < DEFAULT_QUEUE_INIT_SIZE; i++) {
             Integer prior = queue.element();
-            assertEquals(prior, queue.remove());
-        }
-    }
-
-    @Test
-    void testAllNullsOperations() {
-        HeapQueue<String, String> queue = new HeapQueue<>();
-        for (int i = 0; i < DEFAULT_QUEUE_INIT_SIZE; i++) {
-            assertDoesNotThrow(() -> queue.add(null, null));
-        }
-        for (int i = 0; i < DEFAULT_QUEUE_INIT_SIZE; i++) {
-            String prior = queue.element();
-            assertNull(prior);
-            assertEquals(prior, queue.remove());
+            assertEquals(prior, queue.removeRecursiveEdition());
         }
     }
 
@@ -152,25 +113,9 @@ class HeapQueueTest {
     }
 
     @Test
-    void testRemoveDoesNotThrowException() {
-        HeapQueue<String, Float> queue = new HeapQueue<>();
-        queue.add("HOLA", 1.2f);
-        assertDoesNotThrow(queue::remove);
-    }
-
-    @Test
     void testElementException() {
         HeapQueue<String, Float> queue = new HeapQueue<>();
         assertThrows(NoSuchElementException.class, queue::element);
     }
-
-    @Test
-    void testElementDoesNotThrowException() {
-        HeapQueue<String, Float> queue = new HeapQueue<>();
-        queue.add("EPA", 6.66f);
-        assertDoesNotThrow(queue::element);
-    }
-
-
 }
 
