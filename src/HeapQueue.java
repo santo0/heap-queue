@@ -85,7 +85,7 @@ public class HeapQueue<V, P extends Comparable<? super P>> implements PriorityQu
             return elementToRemove;
         }
     }
-
+//this is a comment
     /**
      * Relocates the element given in the parameters to a position where its childs have less priority than it.
      * This operation is done iteratively.
